@@ -12,6 +12,8 @@ function Game(){
     this.listOfPolicemans = [];
     this.counterID = undefined;
     this.moverID = undefined;
+    this.andando = new Audio ('./audios/andando.mp3');
+    this.defondo = new Audio ('./audios/audiofondo.mp3');
 }
   
 //Crea el socre board con las vidas y llama a la funcion para crear la cuenta-atrás
@@ -157,6 +159,7 @@ Game.prototype.move = function (nextX, nextY, dmandirection) {
           $('.deliveryman').addClass(dmandirection);
           this.driverMan.xPos += nextX
           this.driverMan.yPos += nextY
+          this.andando.play();
         } else if ($(nextPosition).hasClass("parceltarget")) {
             $('.deliveryman').removeClass('dmanup');
             $('.deliveryman').removeClass('dmanright');
@@ -188,21 +191,9 @@ Game.prototype.crash = function () {
     }
 }
 
-//Reestablece la vida del driver, lo lleva a la posición 0,0, pone el score a 0 y crea de nuevo el scoreboard e inserta el driver
+//recarga la página si se muere o se acaba el tiempo
 Game.prototype.reStartGame = function() {
-    this.driverMan.life = 4;
-    $('.deliveryman').removeClass('dmanup');
-    $('.deliveryman').removeClass('dmanright');
-    $('.deliveryman').removeClass('dmandown');
-    $('.deliveryman').removeClass('dmanleft');  
-    $('.deliveryman').removeClass('deliveryman');
-    this.move((this.driverMan.xPos * -1), (this.driverMan.yPos * -1));
-    this.removePolicemans();
-    this.restartParcels();
-    this.driverMan.score = 0;
-    this.timmerStop();
-    this.createScoreBoard();
-    this.insertDriver();
+    location.reload();
 }
 
 Game.prototype.createParcels = function () {
@@ -219,6 +210,10 @@ Game.prototype.timmerStart = function () {
     this.counterID = setInterval(function () {
       this.seconds--;
       $("#timecounter").html(this.seconds);
+      if(this.seconds === 49){
+          this.defondo.play();
+      }
+      
       if(this.seconds === 48){
         this.listOfPolicemans.push(new Policeman ('policeman1', 29, 6, -1, 0, 'policemanleft'));
         this.insertpoliceman();
